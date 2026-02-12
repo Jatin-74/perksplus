@@ -13,6 +13,7 @@ import SpotlightCard from "./components/ui/spotlight-card"
 export default function HomePage() {
   const [email, setEmail] = useState("")
   const [isSubscribed, setIsSubscribed] = useState(false)
+  const [isLoading, setIsLoading] = useState(false) // Added loading state
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
 
   useEffect(() => {
@@ -29,9 +30,35 @@ export default function HomePage() {
     }
   }, [])
 
-  const handleSubscribe = (e: React.FormEvent) => {
+  // UPDATED: Async function to call API
+  const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (email) { setIsSubscribed(true); setEmail("") }
+    if (!email) return
+
+    setIsLoading(true)
+
+    try {
+      const response = await fetch('/api/join', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      })
+
+      if (response.ok) {
+        setIsSubscribed(true)
+        setEmail("")
+      } else {
+        console.error("Failed to send email")
+        alert("Something went wrong. Please try again.")
+      }
+    } catch (error) {
+      console.error("Error:", error)
+      alert("Error connecting to server.")
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -78,7 +105,7 @@ export default function HomePage() {
             <div className="w-24 h-[1px] bg-primary/30 my-4" />
             <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto cursor-hover font-light">
               We identify day-to-day problems that are often ignored, solving them through 
-              <span className="text-foreground font-medium italic"> automation, cyber-physical systems, and real-time intelligence </span> 
+              <span className="text-foreground font-medium italic"> automation, cyber-physical systems, and real-time intelligence</span> 
               in a sustainable way.
             </p>
           </div>
@@ -194,8 +221,22 @@ export default function HomePage() {
                 <h2 className="font-serif text-4xl md:text-5xl font-bold">Let&apos;s Build the Future</h2>
                 {!isSubscribed ? (
                 <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-                    <Input type="email" placeholder="Email Address" value={email} onChange={(e) => setEmail(e.target.value)} className="h-14 bg-background/40 border-primary/20 cursor-hover text-lg" required />
-                    <Button type="submit" className="h-14 px-8 premium-hover cursor-hover font-bold bg-primary text-black text-lg">Join Us</Button>
+                    <Input 
+                      type="email" 
+                      placeholder="Email Address" 
+                      value={email} 
+                      onChange={(e) => setEmail(e.target.value)} 
+                      className="h-14 bg-background/40 border-primary/20 cursor-hover text-lg" 
+                      required 
+                      disabled={isLoading}
+                    />
+                    <Button 
+                      type="submit" 
+                      className="h-14 px-8 premium-hover cursor-hover font-bold bg-primary text-black text-lg"
+                      disabled={isLoading}
+                    >
+                      {isLoading ? "Joining..." : "Join Us"}
+                    </Button>
                 </form>
                 ) : (
                 <div className="py-4 text-primary font-bold text-2xl animate-pulse">Welcome to Perks Plus.</div>
@@ -207,9 +248,9 @@ export default function HomePage() {
 
       <footer className="relative z-10 px-6 py-24 border-t border-primary/10 text-center">
         <div className="flex justify-center gap-12 mb-16">
-          <a href="https://www.instagram.com/theperkspluscompany/" className="text-primary/60 hover:text-primary transition-all cursor-hover"><Instagram className="w-8 h-8" /></a>
-          <a href="https://www.linkedin.com/company/perksplusofficial" className="text-primary/60 hover:text-primary transition-all cursor-hover"><Linkedin className="w-8 h-8" /></a>
-          <a href="mailto:officialperksplus@gmail.com" className="text-primary/60 hover:text-primary transition-all cursor-hover"><Mail className="w-8 h-8" /></a>
+          <a href="https://instagram.com/theperkspluscompany/" className="text-primary/60 hover:text-primary transition-all cursor-hover"><Instagram className="w-8 h-8" /></a>
+          <a href="https://www.linkedin.com/company/perksplusofficial/" className="text-primary/60 hover:text-primary transition-all cursor-hover"><Linkedin className="w-8 h-8" /></a>
+          <a href="mailto:perksplusquery@gmail.com" className="text-primary/60 hover:text-primary transition-all cursor-hover"><Mail className="w-8 h-8" /></a>
         </div>
         <p className="text-xs text-muted-foreground/30 uppercase tracking-[0.3em]">© 2026 Perks Plus. All Rights Reserved.</p>
       </footer>

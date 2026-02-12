@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Button } from "../components/ui/button"
+import { Button } from "./ui/button"
 import Link from "next/link"
 import { ChevronDown } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -9,18 +9,17 @@ import { cn } from "@/lib/utils"
 export default function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
 
-  // Standard Links (Team Removed)
   const navItems = [
     { name: "Home", href: "/" },
-    { name: "Mission", href: "#mission" },
-    { name: "Vision", href: "#vision" },
+    { name: "Mission", href: "/#mission" },
+    { name: "Vision", href: "/#vision" },
+    { name: "Team", href: "/team" },
   ]
 
-  // Projects for Dropdown
   const projects = [
-    { name: "Terrasense", href: "#terrasense" },
-    { name: "Match Pulse", href: "#matchpulse" },
-    { name: "P2P", href: "#p2p" },
+    { name: "Terrasense", href: "/terrasense" },
+    { name: "Match Pulse", href: "/matchpulse" },
+    { name: "P2P", href: "/p2p" },
   ]
 
   return (
@@ -42,13 +41,13 @@ export default function Navbar() {
         {/* MIDDLE: Nav Items */}
         <div className="hidden md:flex items-center justify-center gap-8">
           {navItems.map((item) => (
-            <a
+            <Link
               key={item.name}
               href={item.href}
               className="text-sm font-medium text-foreground/80 hover:text-primary transition-all cursor-hover relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-0 after:h-[1px] after:bg-primary after:transition-all hover:after:w-full"
             >
               {item.name}
-            </a>
+            </Link>
           ))}
 
           {/* Projects Dropdown */}
@@ -62,32 +61,39 @@ export default function Navbar() {
               <ChevronDown className={cn("w-4 h-4 transition-transform duration-300", isDropdownOpen && "rotate-180")} />
             </button>
             
-            <div className={cn(
-              "absolute top-full left-1/2 -translate-x-1/2 mt-4 w-56 glass-card rounded-2xl p-2 transition-all duration-300 transform origin-top",
-              isDropdownOpen ? "opacity-100 translate-y-0 scale-100" : "opacity-0 -translate-y-4 scale-95 pointer-events-none"
-            )}>
-              {projects.map((project) => (
-                <Link
-                  key={project.name}
-                  href={project.href}
-                  className="block px-4 py-3 text-sm text-foreground/80 hover:text-primary hover:bg-white/5 rounded-xl transition-all cursor-hover"
-                >
-                  {project.name}
-                </Link>
-              ))}
+            <div 
+              className={cn(
+                "absolute top-full left-1/2 -translate-x-1/2 w-56 pt-4", 
+                "transition-all duration-300 transform origin-top",
+                isDropdownOpen ? "opacity-100 translate-y-0 scale-100" : "opacity-0 -translate-y-4 scale-95 pointer-events-none"
+              )}
+            >
+              <div className="bg-black border border-white/10 rounded-2xl p-2 shadow-xl">
+                {projects.map((project) => (
+                  <Link
+                    key={project.name}
+                    href={project.href}
+                    className="block px-4 py-3 text-sm text-foreground/80 hover:text-primary hover:bg-white/5 rounded-xl transition-all cursor-hover"
+                  >
+                    {project.name}
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
         </div>
         
-        {/* RIGHT: Button */}
+        {/* RIGHT: Button - NOW WRAPPED IN A LINK */}
         <div className="justify-self-end">
-          <Button 
-            variant="default" 
-            size="lg" 
-            className="premium-hover font-semibold px-8 rounded-full bg-primary text-black hover:bg-white cursor-hover shadow-[0_0_20px_rgba(218,165,32,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.4)] transition-all duration-500"
-          >
-            Get in Touch
-          </Button>
+          <Link href="/contact">
+            <Button 
+              variant="default" 
+              size="lg" 
+              className="premium-hover font-semibold px-8 rounded-full bg-primary text-black hover:bg-white cursor-hover shadow-[0_0_20px_rgba(218,165,32,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.4)] transition-all duration-500"
+            >
+              Get in Touch
+            </Button>
+          </Link>
         </div>
       </div>
     </nav>
