@@ -105,7 +105,7 @@ export default function HomePage() {
             <div className="w-24 h-[1px] bg-primary/30 my-4" />
             <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-2xl mx-auto cursor-hover font-light">
               We identify day-to-day problems that are often ignored, solving them through 
-              <span className="text-foreground font-medium italic"> automation, cyber-physical systems, and real-time intelligence</span> 
+              <span className="text-foreground font-medium italic"> automation, cyber-physical systems, and real-time intelligence </span> 
               in a sustainable way.
             </p>
           </div>
