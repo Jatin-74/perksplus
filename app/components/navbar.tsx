@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils"
 export default function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isMobileProjectsOpen, setIsMobileProjectsOpen] = useState(false) // NEW: State for mobile projects dropdown
 
   // Prevent scrolling when mobile menu is open
   useEffect(() => {
@@ -35,6 +36,7 @@ export default function Navbar() {
   // Close mobile menu when a link is clicked
   const handleLinkClick = () => {
     setIsMobileMenuOpen(false)
+    setIsMobileProjectsOpen(false) // Reset dropdown state for next time
   }
 
   return (
@@ -89,7 +91,6 @@ export default function Navbar() {
                 <ChevronDown className={cn("w-4 h-4 transition-transform duration-300", isDropdownOpen && "rotate-180")} />
               </button>
               
-              {/* Wrapper with padding to bridge the gap */}
               <div 
                 className={cn(
                   "absolute top-full left-1/2 -translate-x-1/2 w-56 pt-4", 
@@ -130,11 +131,11 @@ export default function Navbar() {
       {/* MOBILE MENU OVERLAY */}
       <div 
         className={cn(
-          "fixed inset-0 z-[90] bg-black/95 backdrop-blur-3xl transition-all duration-500 flex flex-col items-center justify-center md:hidden",
+          "fixed inset-0 z-[90] bg-black/95 backdrop-blur-3xl transition-all duration-500 flex flex-col items-center justify-center md:hidden overflow-y-auto",
           isMobileMenuOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-full pointer-events-none"
         )}
       >
-        <div className="flex flex-col items-center gap-8 text-center w-full px-6">
+        <div className="flex flex-col items-center gap-8 text-center w-full px-6 py-24">
           
           {/* Standard Links */}
           {navItems.map((item) => (
@@ -150,26 +151,41 @@ export default function Navbar() {
 
           <div className="w-16 h-[1px] bg-primary/30 my-2" />
 
-          {/* Projects Section */}
-          <div className="flex flex-col items-center gap-6 w-full">
-            <span className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Projects</span>
-            {projects.map((project) => (
-              <Link
-                key={project.name}
-                href={project.href}
-                onClick={handleLinkClick}
-                className="text-2xl font-serif font-bold text-foreground hover:text-primary transition-colors"
-              >
-                {project.name}
-              </Link>
-            ))}
+          {/* Projects Dropdown (Mobile Accordion) */}
+          <div className="flex flex-col items-center w-full">
+            <button 
+              onClick={() => setIsMobileProjectsOpen(!isMobileProjectsOpen)}
+              className="flex items-center justify-center gap-2 text-2xl font-serif font-bold text-foreground hover:text-primary transition-colors w-full focus:outline-none"
+            >
+              Projects
+              <ChevronDown className={cn("w-6 h-6 transition-transform duration-300 text-primary", isMobileProjectsOpen && "rotate-180")} />
+            </button>
+
+            {/* Expandable Project Links Container */}
+            <div 
+              className={cn(
+                "flex flex-col items-center overflow-hidden transition-all duration-300 ease-in-out w-full",
+                isMobileProjectsOpen ? "max-h-64 opacity-100 mt-6 gap-6" : "max-h-0 opacity-0 mt-0 gap-0"
+              )}
+            >
+              {projects.map((project) => (
+                <Link
+                  key={project.name}
+                  href={project.href}
+                  onClick={handleLinkClick}
+                  className="text-xl font-serif font-medium text-muted-foreground hover:text-primary transition-colors"
+                >
+                  {project.name}
+                </Link>
+              ))}
+            </div>
           </div>
 
           {/* Contact Button */}
           <Link href="/contact" onClick={handleLinkClick} className="mt-8 w-full max-w-xs">
             <Button 
               size="lg" 
-              className="w-full h-14 text-lg font-bold rounded-full bg-primary text-black hover:bg-white"
+              className="w-full h-14 text-lg font-bold rounded-full bg-primary text-black hover:bg-white shadow-[0_0_20px_rgba(218,165,32,0.3)]"
             >
               Get in Touch
             </Button>
